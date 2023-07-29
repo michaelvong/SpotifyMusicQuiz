@@ -4,13 +4,13 @@ import Dashboard from './Dashboard';
 import Login from './Login';
 
 function App() {
-  const [message, setMessage] = useState("");
 
   const code = new URLSearchParams(window.location.search).get("code");
 
   return (
-    code ? <Dashboard code={code}/> : <Login /> 
-    
+    <div className="App">
+      {code ? <Dashboard code={code}/> : <Login /> }
+    </div>
   );
 }
 

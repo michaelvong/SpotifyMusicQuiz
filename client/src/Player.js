@@ -19,7 +19,7 @@ export default function Player(props){
             const player = new window.Spotify.Player({
                 name: 'Web Playback SDK',
                 getOAuthToken: cb => { cb(props.token); },
-                volume: 0.25
+                volume: 0.15
             });
 
             setPlayer(player);

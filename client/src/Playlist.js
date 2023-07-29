@@ -10,10 +10,11 @@ export default function Playlist(props){
         //console.log(props.accessToken)
         spotifyApi.getUserPlaylists(props.user.id).then((playlists) => {
             //console.log(playlists)
+            console.log('test')
             setPlaylists(playlists.items)
             props.setPlaylists(playlists.items)
         })
-    },[props])
+    },[props.accessToken, props.user])
 
     return(
         <div>

@@ -20,7 +20,6 @@ export default function Dashboard({code}) {
     const [choicesReady, setChoicesReady] = useState(false);
     const [songDuration, setSongDuration] = useState(0);
     const [timeDone, setTimeDone] = useState(false);
-
     let spotifyApi = new SpotifyWebApi();
 
     //hook to set access token and user if token changes
@@ -46,7 +45,6 @@ export default function Dashboard({code}) {
     //hook to populate game choices and play song
     useEffect(() => {
         if(!gameActive) { return };
-        
         let randomChoices = [-1, -1, -1, -1] //this array will hold the random choices for the game
         let correctIndex = Math.floor(Math.random() * 4) //this will choose a number 0-3, assigning that index the correct choice
 
@@ -58,7 +56,9 @@ export default function Dashboard({code}) {
       
               while(!filled){
                 randomChoiceIndex = Math.floor(Math.random() * (songs.length));
-                filled = true;
+                if(!randomChoices.includes(randomChoiceIndex) && randomChoiceIndex !== 0){
+                    filled = true;
+                }
               }
               randomChoices[i] = randomChoiceIndex;
             }
@@ -71,8 +71,7 @@ export default function Dashboard({code}) {
         setCorrectChoice(correctIndex);
         setGameChoices(randomChoices);
         setTimeDone(false)
-        //spotifyApi.play()
-        //spotifyApi.seek(25000)
+
     }, [gameActive]);
 
 
@@ -98,16 +97,34 @@ export default function Dashboard({code}) {
     function handleClick() {
         setWin(false)
         setLose(false)
-        spotifyApi.getPlaylistTracks(playlists.find(t => t.name === userChoice).id, {limit:100}).then((res) => {
-            setSongs(res.items)
+        let songArr = []
+        getAllSongs(0, songArr)
+    }
+
+    //api call to get playlist tracks async to wait for promise
+    async function getAllSongs(currOffset, songArr) {
+        await spotifyApi.getPlaylistTracks(playlists.find(t => t.name === userChoice).id, {limit:100, offset:currOffset}).then((songObjects) => populateSongs(songObjects, currOffset, songArr),{
         })
+    }
+
+    //call back function to populate songs array
+    function populateSongs(songObjs, currOffset, songArr){
+        songArr.push(...songObjs.items)
+        //if the song objs from api call is max limit, add limit to offset and call again for anymore songs
+        if(songObjs.items.length === 100){
+            getAllSongs(currOffset+100, songArr)
+        } else {
+            setSongs(songArr)
+        }
     }
 
     function handleGameChoice(index) {
         if(index === correctChoice){
             setWin(true);
+            setLose(false);
         } else {
             setLose(true);
+            setWin(false);
         }
         setGameActive(false);
         spotifyApi.pause()
