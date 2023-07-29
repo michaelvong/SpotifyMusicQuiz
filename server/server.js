@@ -15,6 +15,7 @@ app.get('/message', (req, res) => {
 
 app.post('/refresh', (req, res) => {
     const refreshToken = req.body.refreshToken
+    console.log(process.env.REACT_APP_REDIRECT_URI)
     const spotifyApi = new spotifyWebApi({
         redirectUri: process.env.REACT_APP_REDIRECT_URI,
         clientId: process.env.REACT_APP_CLIENT_ID,
