@@ -33,6 +33,7 @@ export default function Dashboard({code}) {
 
     //hook to set song array
     useEffect(() => {
+        console.log('in hook')
         if(songs.length === 0) return;
         setSongs(shuffleSongs(songs))
         spotifyApi.getTrack(`${songs[0].track.id}`).then((res) => {
@@ -84,6 +85,7 @@ export default function Dashboard({code}) {
     //function to shuffle and return songs
     //shuffles by doing n swaps
     const shuffleSongs = (songs) => {
+        console.log('inshuffle')
         for (let i = songs.length - 1; i > 0; i--) {
           let j = Math.floor(Math.random() * (i+1));
           let temp = songs[i];
@@ -100,11 +102,11 @@ export default function Dashboard({code}) {
         let songArr = []
         getAllSongs(0, songArr)
     }
-
+    
     //api call to get playlist tracks async to wait for promise
     async function getAllSongs(currOffset, songArr) {
-        await spotifyApi.getPlaylistTracks(playlists.find(t => t.name === userChoice).id, {limit:100, offset:currOffset}).then((songObjects) => populateSongs(songObjects, currOffset, songArr),{
-        })
+        await spotifyApi.getPlaylistTracks(playlists.find(t => t.name === userChoice).id, {limit:100, offset:currOffset}).then((songObjects) => 
+            populateSongs(songObjects, currOffset, songArr),{})
     }
 
     //call back function to populate songs array
